@@ -66,7 +66,7 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
           <div 
             key={`${x}-${y}`}
             className={`relative w-full pb-[100%] 
-              ${isLight ? 'bg-amber-50' : 'bg-amber-900'}
+              ${isLight ? 'bg-gray-300' : 'bg-amber-900'}
               ${isSelected ? 'ring-4 ring-purple-500 ring-inset' : ''}
               ${isHighlighted ? 'ring-4 ring-purple-300 ring-inset' : ''}`}
             onClick={() => handleSquareClick(position)}

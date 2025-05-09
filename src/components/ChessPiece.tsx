@@ -43,6 +43,7 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
   return (
     <div
       className={`absolute inset-0 flex items-center justify-center text-4xl cursor-pointer
+        ${piece.color === 'white' ? 'text-white' : 'text-black'}
         ${isSelected ? 'bg-purple-300 bg-opacity-50 rounded-full' : ''}`}
       onClick={handleClick}
       style={{ 
