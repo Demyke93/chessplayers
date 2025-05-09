@@ -9,7 +9,7 @@ interface GameInfoProps {
 }
 
 const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
-  const { currentPlayer, moveHistory, capturedPieces, isCheck, isCheckmate, isDraw } = gameState;
+  const { currentPlayer, moveHistory, capturedPieces, isCheck, isCheckmate, isStalemate, isDraw } = gameState;
 
   // Format a move for display
   const formatMove = (move: ChessMove, index: number) => {
@@ -83,13 +83,19 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
 
   // Format a move in algebraic notation
   const formatAlgebraicNotation = (move: ChessMove): string => {
+    // Special notation for castling
+    if (move.isCastling) {
+      return move.to.x > move.from.x ? 'O-O' : 'O-O-O';
+    }
+    
     const pieceSymbol = getPieceSymbol(move.piece.type);
     const to = getAlgebraicNotation(move.to);
-    const capture = move.captured ? 'x' : '';
+    const capture = move.captured || move.isEnPassant ? 'x' : '';
     const check = move.isCheck ? '+' : '';
     const checkmate = move.isCheckmate ? '#' : '';
+    const promotion = move.promotion ? `=${getPieceSymbol(move.promotion)}` : '';
     
-    return `${pieceSymbol}${capture}${to}${check}${checkmate}`;
+    return `${pieceSymbol}${capture}${to}${promotion}${check}${checkmate}`;
   };
 
   return (
@@ -101,6 +107,8 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
               <span className="text-red-600">Checkmate!</span>
             ) : isCheck ? (
               <span className="text-orange-500">Check!</span>
+            ) : isStalemate ? (
+              <span className="text-gray-600">Stalemate</span>
             ) : isDraw ? (
               <span className="text-gray-600">Draw</span>
             ) : (
@@ -115,10 +123,22 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
           </button>
         </div>
         
-        {!isCheckmate && !isDraw && (
+        {!isCheckmate && !isStalemate && !isDraw && (
           <div className="flex items-center">
             <div className={`w-4 h-4 rounded-full mr-2 ${currentPlayer === 'white' ? 'bg-white border border-gray-400' : 'bg-black'}`}></div>
             <span className="capitalize">{currentPlayer}'s Turn</span>
+          </div>
+        )}
+        
+        {isCheckmate && (
+          <div className="text-red-600">
+            {currentPlayer === 'white' ? 'Black' : 'White'} wins by checkmate!
+          </div>
+        )}
+        
+        {isStalemate && (
+          <div className="text-gray-600">
+            Game drawn by stalemate.
           </div>
         )}
       </div>

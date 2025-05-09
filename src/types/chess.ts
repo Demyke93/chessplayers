@@ -20,6 +20,7 @@ export interface ChessMove {
   captured?: Piece;
   isCheck?: boolean;
   isCheckmate?: boolean;
+  isStalemate?: boolean;
   isCastling?: boolean;
   isEnPassant?: boolean;
   promotion?: PieceType;
@@ -35,5 +36,7 @@ export interface GameState {
   };
   isCheck: boolean;
   isCheckmate: boolean;
+  isStalemate: boolean;
   isDraw: boolean;
+  enPassantTarget: Position | null;
 }

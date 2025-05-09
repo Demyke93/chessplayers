@@ -14,16 +14,22 @@ const Index = () => {
     
     // Show notifications for special game states
     if (newGameState.isCheckmate) {
-      const winner = gameState.currentPlayer;
+      const winner = newGameState.currentPlayer === 'white' ? 'Black' : 'White';
       toast({
         title: "Checkmate!",
-        description: `${winner.charAt(0).toUpperCase() + winner.slice(1)} wins the game!`,
+        description: `${winner} wins the game!`,
+        duration: 5000,
+      });
+    } else if (newGameState.isStalemate) {
+      toast({
+        title: "Stalemate!",
+        description: "The game is a draw by stalemate.",
         duration: 5000,
       });
     } else if (newGameState.isCheck) {
       toast({
         title: "Check!",
-        description: `${newGameState.currentPlayer.charAt(0).toUpperCase() + newGameState.currentPlayer.slice(1)}'s king is in check!`,
+        description: `${newGameState.currentPlayer}'s king is in check!`,
         duration: 3000,
       });
     }
