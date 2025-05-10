@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { GameState, ChessMove, PieceType, PieceColor } from '@/types/chess';
 import { getAlgebraicNotation } from '@/utils/chessLogic';
@@ -98,6 +97,34 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
     return `${pieceSymbol}${capture}${to}${promotion}${check}${checkmate}`;
   };
 
+  // Game rules explanation
+  const renderGameRules = () => {
+    if (isCheckmate) {
+      return (
+        <div className="mt-4 p-2 bg-red-50 border border-red-200 rounded-md">
+          <h4 className="font-semibold text-red-700">Checkmate Rule</h4>
+          <p className="text-sm text-red-700">
+            Checkmate occurs when a king is under attack (in check) and has no legal moves to escape.
+            The attacking player wins the game.
+          </p>
+        </div>
+      );
+    }
+    
+    if (isCheck) {
+      return (
+        <div className="mt-4 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+          <h4 className="font-semibold text-yellow-700">Check Rule</h4>
+          <p className="text-sm text-yellow-700">
+            The king is under attack! You must move the king, capture the attacking piece, or block the attack.
+          </p>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
       <div className="mb-4">
@@ -141,6 +168,8 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
             Game drawn by stalemate.
           </div>
         )}
+        
+        {renderGameRules()}
       </div>
       
       <div className="mb-4">
