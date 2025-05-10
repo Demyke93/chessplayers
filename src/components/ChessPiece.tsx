@@ -49,6 +49,8 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
       style={{ 
         touchAction: 'none',
         userSelect: 'none',
+        textShadow: piece.color === 'white' ? '0px 0px 2px #000' : '0px 0px 2px #fff',
+        filter: piece.color === 'white' ? 'drop-shadow(0px 0px 1px rgba(0,0,0,0.5))' : 'drop-shadow(0px 0px 1px rgba(255,255,255,0.5))',
       }}
     >
       {pieceSymbols[piece.color][piece.type]}

@@ -66,7 +66,7 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
           <div 
             key={`${x}-${y}`}
             className={`relative w-full pb-[100%] 
-              ${isLight ? 'bg-gray-300' : 'bg-amber-900'}
+              ${isLight ? 'bg-[#f0d9b5]' : 'bg-[#b58863]'}
               ${isSelected ? 'ring-4 ring-purple-500 ring-inset' : ''}
               ${isHighlighted ? 'ring-4 ring-purple-300 ring-inset' : ''}`}
             onClick={() => handleSquareClick(position)}
@@ -102,7 +102,7 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
 
   return (
     <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl">
-      <div className="grid grid-cols-8 gap-0 border-4 border-amber-900 shadow-xl">
+      <div className="grid grid-cols-8 gap-0 border-4 border-[#b58863] shadow-xl">
         {renderSquares()}
       </div>
     </div>
