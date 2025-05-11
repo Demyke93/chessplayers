@@ -43,25 +43,25 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
   return (
     <div
       className={`absolute inset-0 flex items-center justify-center text-4xl cursor-pointer
+        ${piece.color === 'white' ? 'text-white' : 'text-black'}
         ${isSelected ? 'bg-purple-300 bg-opacity-50 rounded-full' : ''}`}
       onClick={handleClick}
       style={{ 
         touchAction: 'none',
         userSelect: 'none',
-        // Enhanced styling for white pieces to make them clearer and sharper
-        ...(piece.color === 'white' ? {
-          color: '#FFFFFF',
-          textShadow: '0px 0px 1px #000, 0px 0px 2px #000',
-          WebkitTextFillColor: '#FFFFFF',
-          WebkitTextStroke: '1.2px #000',
-          filter: 'contrast(1.2) brightness(1.05) drop-shadow(0px 0px 1px rgba(0,0,0,0.9))',
-          fontWeight: 'bold',
-          transform: 'scale(1.02)',
-        } : {
-          color: 'black',
-          textShadow: '0px 0px 2px #fff',
-          filter: 'drop-shadow(0px 0px 1px rgba(255,255,255,0.5))',
-        }),
+        textShadow: piece.color === 'white' 
+          ? '0px 0px 4px #fff, 0px 0px 4px #fff, 0px 0px 4px #fff' 
+          : '0px 0px 2px #fff',
+        filter: piece.color === 'white' 
+          ? 'drop-shadow(0px 0px 3px rgba(255,255,255,1))' 
+          : 'drop-shadow(0px 0px 1px rgba(255,255,255,0.5))',
+        transform: 'scale(1.0)',
+        // Ensure white pieces are fully opaque with solid fill
+        ...(piece.color === 'white' && {
+          WebkitTextFillColor: '#FFFFFF', 
+          WebkitTextStroke: '1px #fff',
+          fontWeight: 'bold'
+        })
       }}
     >
       {pieceSymbols[piece.color][piece.type]}
