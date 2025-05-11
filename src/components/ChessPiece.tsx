@@ -18,12 +18,12 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
   // Unicode chess pieces
   const pieceSymbols = {
     white: {
-      king: '♔',
-      queen: '♕',
-      rook: '♖',
-      bishop: '♗',
-      knight: '♘',
-      pawn: '♙',
+      king: '♚',
+      queen: '♛',
+      rook: '♜',
+      bishop: '♝',
+      knight: '♞',
+      pawn: '♟',
     },
     black: {
       king: '♚',
