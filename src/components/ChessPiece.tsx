@@ -50,12 +50,18 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
         touchAction: 'none',
         userSelect: 'none',
         textShadow: piece.color === 'white' 
-          ? '0px 0px 3px #000, 0px 0px 3px #000' 
+          ? '0px 0px 4px #000, 0px 0px 4px #000, 0px 0px 4px #000' 
           : '0px 0px 2px #fff',
         filter: piece.color === 'white' 
-          ? 'drop-shadow(0px 0px 2px rgba(0,0,0,0.7))' 
+          ? 'drop-shadow(0px 0px 3px rgba(0,0,0,1))' 
           : 'drop-shadow(0px 0px 1px rgba(255,255,255,0.5))',
         transform: 'scale(1.0)',
+        // Ensure white pieces are fully opaque with solid fill
+        ...(piece.color === 'white' && {
+          WebkitTextFillColor: '#FFFFFF', 
+          WebkitTextStroke: '1px #000',
+          fontWeight: 'bold'
+        })
       }}
     >
       {pieceSymbols[piece.color][piece.type]}
