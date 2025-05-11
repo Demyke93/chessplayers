@@ -42,16 +42,20 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
 
   return (
     <div
-      className={`absolute inset-0 flex items-center justify-center text-5xl cursor-pointer
+      className={`absolute inset-0 flex items-center justify-center text-4xl cursor-pointer
         ${piece.color === 'white' ? 'text-white' : 'text-black'}
         ${isSelected ? 'bg-purple-300 bg-opacity-50 rounded-full' : ''}`}
       onClick={handleClick}
       style={{ 
         touchAction: 'none',
         userSelect: 'none',
-        textShadow: piece.color === 'white' ? '0px 0px 2px #000' : '0px 0px 2px #fff',
-        filter: piece.color === 'white' ? 'drop-shadow(0px 0px 1px rgba(0,0,0,0.5))' : 'drop-shadow(0px 0px 1px rgba(255,255,255,0.5))',
-        transform: 'scale(1.2)',
+        textShadow: piece.color === 'white' 
+          ? '0px 0px 3px #000, 0px 0px 3px #000' 
+          : '0px 0px 2px #fff',
+        filter: piece.color === 'white' 
+          ? 'drop-shadow(0px 0px 2px rgba(0,0,0,0.7))' 
+          : 'drop-shadow(0px 0px 1px rgba(255,255,255,0.5))',
+        transform: 'scale(1.0)',
       }}
     >
       {pieceSymbols[piece.color][piece.type]}
