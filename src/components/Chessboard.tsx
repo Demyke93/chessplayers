@@ -13,11 +13,6 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
   const [selectedPosition, setSelectedPosition] = useState<Position | null>(null);
   const [highlightedSquares, setHighlightedSquares] = useState<Position[]>([]);
 
-  // Lichess-like colors
-  const lightSquareColor = 'bg-[#f0d9b5]'; // Lichess light square color
-  const darkSquareColor = 'bg-[#b58863]';  // Lichess dark square color
-  const highlightColor = 'ring-4 ring-[#7b68ee] ring-opacity-60 ring-inset'; // Similar to Lichess highlight
-
   const handleSquareClick = (position: Position) => {
     const piece = gameState.board[position.y][position.x];
     
@@ -71,19 +66,19 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
           <div 
             key={`${x}-${y}`}
             className={`relative w-full pb-[100%] 
-              ${isLight ? lightSquareColor : darkSquareColor}
-              ${isSelected ? highlightColor : ''}
-              ${isHighlighted ? highlightColor : ''}`}
+              ${isLight ? 'bg-[#f0d9b5]' : 'bg-[#b58863]'}
+              ${isSelected ? 'ring-4 ring-purple-500 ring-inset' : ''}
+              ${isHighlighted ? 'ring-4 ring-purple-300 ring-inset' : ''}`}
             onClick={() => handleSquareClick(position)}
           >
             {/* Coordinate labels */}
             {x === 0 && (
-              <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 text-sm font-medium text-gray-700">
+              <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 text-sm text-gray-600">
                 {8 - y}
               </div>
             )}
             {y === 7 && (
-              <div className="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 text-sm font-medium text-gray-700">
+              <div className="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 text-sm text-gray-600">
                 {String.fromCharCode(97 + x)}
               </div>
             )}
