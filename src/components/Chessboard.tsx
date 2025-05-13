@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Piece, Position, GameState } from '@/types/chess';
 import { isValidMove, makeMove, getPossibleMoves, getAlgebraicNotation } from '@/utils/chessLogic';
 import ChessPiece from './ChessPiece';
+import { Dot } from 'lucide-react';
 
 interface ChessboardProps {
   gameState: GameState;
@@ -67,8 +68,7 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
             key={`${x}-${y}`}
             className={`relative w-full pb-[100%] 
               ${isLight ? 'bg-[#f0d9b5]' : 'bg-[#b58863]'}
-              ${isSelected ? 'ring-4 ring-purple-500 ring-inset' : ''}
-              ${isHighlighted ? 'ring-4 ring-purple-300 ring-inset' : ''}`}
+              ${isSelected ? 'ring-2 ring-[#786514] ring-inset' : ''}`}
             onClick={() => handleSquareClick(position)}
           >
             {/* Coordinate labels */}
@@ -81,6 +81,18 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
               <div className="absolute bottom-[-1.5rem] left-1/2 transform -translate-x-1/2 text-sm text-gray-600">
                 {String.fromCharCode(97 + x)}
               </div>
+            )}
+            
+            {/* Green dot for legal moves */}
+            {isHighlighted && !piece && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-3 h-3 rounded-full bg-[#F2FCE2] opacity-80"></div>
+              </div>
+            )}
+
+            {/* Green highlight for captures */}
+            {isHighlighted && piece && (
+              <div className="absolute inset-0 ring-4 ring-[#F2FCE2] ring-opacity-40 ring-inset"></div>
             )}
             
             {/* Chess piece */}
@@ -101,8 +113,8 @@ const Chessboard: React.FC<ChessboardProps> = ({ gameState, onMove }) => {
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl">
-      <div className="grid grid-cols-8 gap-0 border-4 border-[#b58863] shadow-xl">
+    <div className="relative w-[95vw] max-w-md md:max-w-lg lg:max-w-xl mx-auto">
+      <div className="grid grid-cols-8 gap-0 border-4 border-[#b58863] shadow-xl aspect-square">
         {renderSquares()}
       </div>
     </div>
