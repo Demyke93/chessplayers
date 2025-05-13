@@ -26,12 +26,12 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
       pawn: '♙',
     },
     black: {
-      king: '♚',
-      queen: '♛',
-      rook: '♜',
-      bishop: '♝',
-      knight: '♞',
-      pawn: '♟',
+       king: '♔',
+      queen: '♕',
+      rook: '♖',
+      bishop: '♗',
+      knight: '♘',
+      pawn: '♙',
     },
   };
 
