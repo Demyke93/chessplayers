@@ -4,7 +4,6 @@ import Chessboard from '@/components/Chessboard';
 import GameInfo from '@/components/GameInfo';
 import { GameState, PieceColor } from '@/types/chess';
 import { initializeGame, takeBackMove } from '@/utils/chessLogic';
-import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>(initializeGame());
@@ -23,64 +22,24 @@ const Index = () => {
 
   const handleMove = (newGameState: GameState) => {
     setGameState(newGameState);
-    
-    // Show notifications for special game states
-    if (newGameState.isCheckmate) {
-      const winner = newGameState.currentPlayer === 'white' ? 'Black' : 'White';
-      toast({
-        title: "Checkmate!",
-        description: `${winner} wins the game!`,
-        duration: 5000,
-      });
-    } else if (newGameState.isStalemate) {
-      toast({
-        title: "Stalemate!",
-        description: "The game is a draw by stalemate.",
-        duration: 5000,
-      });
-    } else if (newGameState.isCheck) {
-      toast({
-        title: "Check!",
-        description: `${newGameState.currentPlayer}'s king is in check!`,
-        duration: 3000,
-      });
-    }
+    // Removed toast notifications
   };
 
   const handleRestart = () => {
     setGameState(initializeGame());
-    toast({
-      title: "New Game",
-      description: "The board has been reset. White moves first.",
-      duration: 3000,
-    });
+    // Removed toast notification
   };
 
   const handleTakeback = () => {
     const newGameState = takeBackMove(gameState);
     setGameState(newGameState);
-    
-    if (gameState.moveHistory.length > 0) {
-      toast({
-        title: "Move Taken Back",
-        description: "The last move has been undone.",
-        duration: 3000,
-      });
-    }
+    // Removed toast notification
   };
 
   const handleTimeOut = (color: PieceColor) => {
     if (gameState.isCheckmate || gameState.isStalemate || gameState.isDraw) {
       return; // Game is already over
     }
-
-    const winner = color === 'white' ? 'Black' : 'White';
-    
-    toast({
-      title: "Time's Up!",
-      description: `${winner} wins on time!`,
-      duration: 5000,
-    });
 
     // Update game state to reflect the game is over
     setGameState({
