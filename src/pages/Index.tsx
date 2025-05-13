@@ -1,13 +1,25 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Chessboard from '@/components/Chessboard';
 import GameInfo from '@/components/GameInfo';
-import { GameState } from '@/types/chess';
-import { initializeGame } from '@/utils/chessLogic';
+import { GameState, PieceColor } from '@/types/chess';
+import { initializeGame, takeBackMove } from '@/utils/chessLogic';
 import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [gameState, setGameState] = useState<GameState>(initializeGame());
+
+  // Start timer when first move is made
+  useEffect(() => {
+    if (gameState.moveHistory.length === 1 && gameState.timerActive === false) {
+      const newGameState = { 
+        ...gameState,
+        timerActive: true,
+        lastMoveTimestamp: Date.now()
+      };
+      setGameState(newGameState);
+    }
+  }, [gameState.moveHistory.length]);
 
   const handleMove = (newGameState: GameState) => {
     setGameState(newGameState);
@@ -44,6 +56,59 @@ const Index = () => {
     });
   };
 
+  const handleTakeback = () => {
+    const newGameState = takeBackMove(gameState);
+    setGameState(newGameState);
+    
+    if (gameState.moveHistory.length > 0) {
+      toast({
+        title: "Move Taken Back",
+        description: "The last move has been undone.",
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleTimeOut = (color: PieceColor) => {
+    if (gameState.isCheckmate || gameState.isStalemate || gameState.isDraw) {
+      return; // Game is already over
+    }
+
+    const winner = color === 'white' ? 'Black' : 'White';
+    
+    toast({
+      title: "Time's Up!",
+      description: `${winner} wins on time!`,
+      duration: 5000,
+    });
+
+    // Update game state to reflect the game is over
+    setGameState({
+      ...gameState,
+      isCheckmate: true, // Using checkmate flag to indicate game over
+      timerActive: false,
+    });
+  };
+
+  const handleTimerToggle = () => {
+    const now = Date.now();
+    
+    if (gameState.timerActive) {
+      // Pausing the timer - save the current times
+      setGameState({
+        ...gameState,
+        timerActive: false,
+      });
+    } else {
+      // Starting/resuming the timer
+      setGameState({
+        ...gameState,
+        timerActive: true,
+        lastMoveTimestamp: now,
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-purple-100 py-8 px-4">
       <div className="max-w-6xl mx-auto">
@@ -55,7 +120,13 @@ const Index = () => {
           </div>
           
           <div>
-            <GameInfo gameState={gameState} onRestart={handleRestart} />
+            <GameInfo 
+              gameState={gameState} 
+              onRestart={handleRestart} 
+              onTakeback={handleTakeback} 
+              onTimeOut={handleTimeOut}
+              onTimerToggle={handleTimerToggle}
+            />
           </div>
         </div>
         

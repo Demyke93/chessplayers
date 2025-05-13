@@ -1,14 +1,27 @@
+
 import React from 'react';
 import { GameState, ChessMove, PieceType, PieceColor } from '@/types/chess';
 import { getAlgebraicNotation } from '@/utils/chessLogic';
+import { Button } from '@/components/ui/button';
+import ChessTimer from './ChessTimer';
+import { ArrowLeft } from 'lucide-react';
 
 interface GameInfoProps {
   gameState: GameState;
   onRestart: () => void;
+  onTakeback: () => void;
+  onTimeOut: (color: PieceColor) => void;
+  onTimerToggle: () => void;
 }
 
-const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
-  const { currentPlayer, moveHistory, capturedPieces, isCheck, isCheckmate, isStalemate, isDraw } = gameState;
+const GameInfo: React.FC<GameInfoProps> = ({ 
+  gameState, 
+  onRestart, 
+  onTakeback, 
+  onTimeOut,
+  onTimerToggle
+}) => {
+  const { currentPlayer, moveHistory, capturedPieces, isCheck, isCheckmate, isStalemate, isDraw, timerActive } = gameState;
 
   // Format a move for display
   const formatMove = (move: ChessMove, index: number) => {
@@ -127,6 +140,8 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
+      <ChessTimer gameState={gameState} onTimeOut={onTimeOut} />
+
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <h2 className="text-xl font-bold">
@@ -142,29 +157,50 @@ const GameInfo: React.FC<GameInfoProps> = ({ gameState, onRestart }) => {
               <span>Current Turn</span>
             )}
           </h2>
-          <button 
-            onClick={onRestart}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1 rounded"
-          >
-            Restart Game
-          </button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onTakeback} 
+              disabled={moveHistory.length === 0 || isCheckmate || isStalemate || isDraw}
+            >
+              <ArrowLeft size={16} className="mr-1" />
+              Takeback
+            </Button>
+            <Button 
+              onClick={onRestart}
+              variant="destructive" 
+              size="sm"
+            >
+              Restart
+            </Button>
+          </div>
         </div>
         
-        {!isCheckmate && !isStalemate && !isDraw && (
+        <div className="flex justify-between items-center">
           <div className="flex items-center">
             <div className={`w-4 h-4 rounded-full mr-2 ${currentPlayer === 'white' ? 'bg-white border border-gray-400' : 'bg-black'}`}></div>
-            <span className="capitalize">{currentPlayer}'s Turn</span>
+            <span className="capitalize">{!isCheckmate && !isStalemate && !isDraw && `${currentPlayer}'s Turn`}</span>
           </div>
-        )}
+          
+          <Button 
+            variant={timerActive ? "default" : "secondary"} 
+            size="sm" 
+            onClick={onTimerToggle}
+            disabled={isCheckmate || isStalemate || isDraw}
+          >
+            {timerActive ? "Pause Timer" : "Start Timer"}
+          </Button>
+        </div>
         
         {isCheckmate && (
-          <div className="text-red-600">
+          <div className="text-red-600 mt-2">
             {currentPlayer === 'white' ? 'Black' : 'White'} wins by checkmate!
           </div>
         )}
         
         {isStalemate && (
-          <div className="text-gray-600">
+          <div className="text-gray-600 mt-2">
             Game drawn by stalemate.
           </div>
         )}

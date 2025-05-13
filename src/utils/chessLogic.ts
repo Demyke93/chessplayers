@@ -37,6 +37,9 @@ export const initializeGame = (): GameState => {
   board[0][4] = { type: 'king', color: 'black', hasMoved: false };
   board[7][4] = { type: 'king', color: 'white', hasMoved: false };
   
+  // 5 minutes in milliseconds = 300000
+  const fiveMinutes = 5 * 60 * 1000;
+  
   return {
     board,
     currentPlayer: 'white',
@@ -50,6 +53,12 @@ export const initializeGame = (): GameState => {
     isStalemate: false,
     isDraw: false,
     enPassantTarget: null,
+    timers: {
+      white: fiveMinutes,
+      black: fiveMinutes
+    },
+    lastMoveTimestamp: null,
+    timerActive: false
   };
 };
 
@@ -415,6 +424,20 @@ export const makeMove = (
   const piece = board[from.y][from.x];
   if (!piece) return gameState;
   
+  // Update timers on move
+  const now = Date.now();
+  if (newGameState.lastMoveTimestamp && newGameState.timerActive) {
+    const elapsed = now - newGameState.lastMoveTimestamp;
+    if (newGameState.currentPlayer === 'white') {
+      newGameState.timers.white = Math.max(0, newGameState.timers.white - elapsed);
+    } else {
+      newGameState.timers.black = Math.max(0, newGameState.timers.black - elapsed);
+    }
+  }
+  
+  // Set move timestamp
+  newGameState.lastMoveTimestamp = now;
+  
   // Create move record
   const move: ChessMove = {
     piece,
@@ -515,6 +538,92 @@ export const makeMove = (
       newGameState.isDraw = true;
     }
   }
+  
+  return newGameState;
+};
+
+// Take back the last move
+export const takeBackMove = (gameState: GameState): GameState => {
+  // Make a deep copy of the game state
+  const newGameState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  
+  // Check if there's a move to take back
+  if (newGameState.moveHistory.length === 0) {
+    return gameState; // Nothing to take back
+  }
+  
+  // Get the last move
+  const lastMove = newGameState.moveHistory.pop()!;
+  
+  // Switch back to previous player
+  newGameState.currentPlayer = lastMove.piece.color;
+  
+  // Reset check/checkmate/stalemate flags
+  newGameState.isCheck = false;
+  newGameState.isCheckmate = false;
+  newGameState.isStalemate = false;
+  newGameState.isDraw = false;
+  
+  // Move the piece back
+  const { board } = newGameState;
+  board[lastMove.from.y][lastMove.from.x] = lastMove.piece;
+  
+  // If the piece was a king or rook that moved for the first time, reset hasMoved
+  if ((lastMove.piece.type === 'king' || lastMove.piece.type === 'rook') && 
+      lastMove.piece.hasMoved === true) {
+    board[lastMove.from.y][lastMove.from.x]!.hasMoved = false;
+  }
+  
+  // Handle captured piece
+  if (lastMove.captured) {
+    // If it was an en passant capture, the pawn goes on a different square
+    if (lastMove.isEnPassant) {
+      board[lastMove.from.y][lastMove.to.x] = lastMove.captured;
+      board[lastMove.to.y][lastMove.to.x] = null;
+    } else {
+      board[lastMove.to.y][lastMove.to.x] = lastMove.captured;
+    }
+    
+    // Remove from captured pieces array
+    newGameState.capturedPieces[lastMove.captured.color] = 
+      newGameState.capturedPieces[lastMove.captured.color].filter(
+        (_, index, arr) => index !== arr.length - 1
+      );
+  } else {
+    board[lastMove.to.y][lastMove.to.x] = null;
+  }
+  
+  // Handle castling
+  if (lastMove.isCastling) {
+    const isKingSide = lastMove.to.x > lastMove.from.x;
+    const rookFromX = isKingSide ? lastMove.to.x - 1 : lastMove.to.x + 1;
+    const rookToX = isKingSide ? 7 : 0;
+    
+    // Move the rook back
+    board[lastMove.from.y][rookToX] = {
+      type: 'rook',
+      color: lastMove.piece.color,
+      hasMoved: false,
+    };
+    board[lastMove.from.y][rookFromX] = null;
+  }
+  
+  // Handle promotion - we can't determine original pawn, so just convert back to pawn
+  if (lastMove.promotion) {
+    board[lastMove.from.y][lastMove.from.x]!.type = 'pawn';
+  }
+  
+  // Set the timers for the player who just got their turn back
+  const now = Date.now();
+  if (newGameState.lastMoveTimestamp && newGameState.timerActive) {
+    // Calculate time returned to the previous player
+    const opponentColor = lastMove.piece.color === 'white' ? 'black' : 'white';
+    const elapsed = now - newGameState.lastMoveTimestamp;
+    newGameState.timers[opponentColor] += elapsed;
+  }
+  
+  // Update timestamp
+  newGameState.lastMoveTimestamp = now;
   
   return newGameState;
 };

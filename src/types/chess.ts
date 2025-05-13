@@ -39,4 +39,11 @@ export interface GameState {
   isStalemate: boolean;
   isDraw: boolean;
   enPassantTarget: Position | null;
+  timers: {
+    white: number;
+    black: number;
+  };
+  lastMoveTimestamp: number | null;
+  timerActive: boolean;
 }
+
